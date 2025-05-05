@@ -3,6 +3,7 @@ export const Colors = {
     listHeader: '#FFDAB9',
     card: '#FFFFFF',
     primaryButton: '#FFB6C1',
+    secondaryButton: '#FF8FA3',
     deleteButton: '#FF6347',
     textPrimary: '#333333',
     textSecondary: '#666666',
