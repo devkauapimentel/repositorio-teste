@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "title": "Gratidão pelo Dia",
+    "text": "Agradeço por este novo dia, por todas as bênçãos recebidas e pela oportunidade de crescer e evoluir. Que eu viva este dia com gratidão e amor.",
+    "category": "Gratidão",
+    "duration": 3
+  },
+  {
+    "id": "2",
+    "title": "Proteção Diária",
+    "text": "Que a luz divina me proteja por onde eu for. Que os caminhos se abram e os obstáculos se dissipem. Sinto-me seguro(a) e protegido(a) a cada passo.",
+    "category": "Proteção",
+    "duration": 2
+  },
+  {
+    "id": "3",
+    "title": "Paz Interior",
+    "text": "Respiro profundamente e encontro a paz que habita em mim. A cada inspiração, trago calma; a cada expiração, libero tensões. Meu ser está em paz.",
+    "category": "Paz",
+    "duration": 5
+  },
+  {
+    "id": "4",
+    "title": "Cura e Saúde",
+    "text": "Visualizo meu corpo saudável e forte. Cada célula vibra em perfeita harmonia. A energia de cura flui por todo meu ser, trazendo vitalidade e renovação.",
+    "category": "Saúde",
+    "duration": 4
+  },
+  {
+    "id": "5",
+    "title": "Prosperidade e Abundância",
+    "text": "Estou aberto(a) a receber todas as formas de abundância em minha vida. Reconheço as infinitas possibilidades e atraio prosperidade em todas as áreas.",
+    "category": "Prosperidade",
+    "duration": 3
+  },
+  {
+    "id": "6",
+    "title": "Amor Próprio",
+    "text": "Eu me amo e me aceito exatamente como sou. Reconheço meu valor e minha beleza interior. Sou digno(a) de amor, respeito e felicidade.",
+    "category": "Autoamor",
+    "duration": 4
+  },
+  {
+    "id": "7",
+    "title": "Conexão Espiritual",
+    "text": "Elevo meus pensamentos e me conecto com a energia divina que flui no universo. Sinto a presença sagrada em meu coração e me rendo à sabedoria suprema.",
+    "category": "Espiritualidade",
+    "duration": 6
+  },
+  {
+    "id": "8",
+    "title": "Sabedoria nas Decisões",
+    "text": "Peço que a sabedoria divina guie minhas escolhas. Confio na minha intuição e no caminho que se apresenta. Cada decisão me leva ao meu mais alto bem.",
+    "category": "Sabedoria",
+    "duration": 3
+  },
+  {
+    "id": "9",
+    "title": "Perdão e Libertação",
+    "text": "Liberto-me de mágoas e ressentimentos. Perdoo a mim e aos outros com compaixão e entendimento. Cada ato de perdão me traz mais leveza e paz.",
+    "category": "Perdão",
+    "duration": 5
+  },
+  {
+    "id": "10",
+    "title": "Manifestação de Sonhos",
+    "text": "Visualizo meus sonhos se realizando com clareza e fé. O universo conspira a meu favor, e estou alinhado(a) com o fluxo de realização e propósito.",
+    "category": "Manifestação",
+    "duration": 4
+  }
+] 
