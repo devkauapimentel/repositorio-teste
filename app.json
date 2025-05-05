@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "RotinaAutoamor",
+    "slug": "RotinaAutoamor",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF0F5"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#FFF0F5"
+      },
+      "package": "com.yourcompany.rotinaautoamor",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O aplicativo precisa acessar suas fotos para adicionar imagens às suas tarefas."
+        }
+      ]
+    ],
+    "scheme": "rotinaautoamor",
+    "extra": {
+      "eas": {
+        "projectId": "f7b2adb0-2d79-46f6-81a5-c975fedc42ef"
+      }
+    }
+  }
+}
