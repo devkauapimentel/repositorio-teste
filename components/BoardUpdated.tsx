@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
     Text,
@@ -7,15 +7,19 @@ import {
     ScrollView,
     TouchableOpacity,
     Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    Animated
 } from 'react-native';
 import { useStorage } from '../hooks/useStorage';
 import TaskList from './TaskList';
 import { Colors, Fonts, Spacing } from '../constants/theme';
 
-const { width } = Dimensions.get('window');
-const isSmallScreen = width < 600;
+// Get screen dimensions
+const windowWidth = Dimensions.get('window').width;
+const isSmallScreen = windowWidth < 600;
 
-const Board: React.FC = () => {
+const BoardUpdated: React.FC = () => {
     const {
         boardData,
         isLoading,
@@ -31,9 +35,48 @@ const Board: React.FC = () => {
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [newListTitle, setNewListTitle] = useState('');
+    const [screenWidth, setScreenWidth] = useState(windowWidth);
+    const [listAnimation] = useState(new Animated.Value(0));
 
+    const scrollViewRef = useRef<ScrollView>(null);
     const titleInputRef = useRef<TextInput>(null);
     const descriptionInputRef = useRef<TextInput>(null);
+
+    // Monitor screen width changes
+    useEffect(() => {
+        const handleDimensionsChange = ({ window: { width } }: { window: { width: number } }) => {
+            setScreenWidth(width);
+        };
+
+        const subscription = Dimensions.addEventListener('change', handleDimensionsChange);
+
+        return () => {
+            subscription.remove();
+        };
+    }, []);
+
+    // Scroll to the last list when a new one is added
+    useEffect(() => {
+        if (!isSmallScreen && boardData.lists.length > 0 && scrollViewRef.current) {
+            setTimeout(() => {
+                scrollViewRef.current?.scrollToEnd({ animated: true });
+            }, 300);
+        }
+    }, [boardData.lists.length, isSmallScreen]);
+
+    // Run animation when lists change
+    useEffect(() => {
+        Animated.spring(listAnimation, {
+            toValue: 1,
+            friction: 6,
+            tension: 40,
+            useNativeDriver: true,
+        }).start();
+
+        return () => {
+            listAnimation.setValue(0);
+        };
+    }, [boardData.lists.length, listAnimation]);
 
     const handleTitlePress = () => {
         setIsEditingTitle(true);
@@ -68,6 +111,10 @@ const Board: React.FC = () => {
     const handleAddList = () => {
         if (newListTitle.trim() === '') return;
 
+        // Reset animation value
+        listAnimation.setValue(0);
+
+        // Add new list
         addList(newListTitle);
         setNewListTitle('');
     };
@@ -81,7 +128,11 @@ const Board: React.FC = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        >
             <View style={styles.header}>
                 {isEditingTitle ? (
                     <TextInput
@@ -90,6 +141,7 @@ const Board: React.FC = () => {
                         value={boardData.title}
                         onChangeText={handleTitleChange}
                         onBlur={handleTitleBlur}
+                        autoFocus
                     />
                 ) : (
                     <TouchableOpacity onPress={handleTitlePress}>
@@ -114,34 +166,66 @@ const Board: React.FC = () => {
             </View>
 
             <ScrollView
+                ref={scrollViewRef}
                 horizontal={!isSmallScreen}
                 contentContainerStyle={[
                     styles.listsContainer,
                     isSmallScreen && styles.listsContainerSmall
                 ]}
+                showsHorizontalScrollIndicator={!isSmallScreen}
+                showsVerticalScrollIndicator={isSmallScreen}
+                scrollEventThrottle={16}
             >
-                {boardData.lists.map((list) => (
-                    <TaskList
+                {boardData.lists.map((list, index) => (
+                    <Animated.View
                         key={list.id}
-                        list={list}
-                        onUpdateTitle={(title) => updateListTitle(list.id, title)}
-                        onDeleteList={() => deleteList(list.id)}
-                        onAddTask={(task) => addTask(list.id, task)}
-                        onUpdateTask={(taskId, updates) => updateTask(list.id, taskId, updates)}
-                        onDeleteTask={(taskId) => deleteTask(list.id, taskId)}
-                    />
+                        style={{
+                            transform: [
+                                {
+                                    scale: index === boardData.lists.length - 1
+                                        ? listAnimation.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0.9, 1]
+                                        })
+                                        : 1
+                                }
+                            ],
+                            opacity: index === boardData.lists.length - 1
+                                ? listAnimation.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0.7, 1]
+                                })
+                                : 1
+                        }}
+                    >
+                        <TaskList
+                            list={list}
+                            onUpdateTitle={(title) => updateListTitle(list.id, title)}
+                            onDeleteList={() => deleteList(list.id)}
+                            onAddTask={(task) => addTask(list.id, task)}
+                            onUpdateTask={(taskId, updates) => updateTask(list.id, taskId, updates)}
+                            onDeleteTask={(taskId) => deleteTask(list.id, taskId)}
+                        />
+                    </Animated.View>
                 ))}
 
-                <View style={styles.addListContainer}>
+                <View style={[
+                    styles.addListContainer,
+                    isSmallScreen && styles.addListContainerSmall
+                ]}>
                     <TextInput
                         style={styles.addListInput}
                         value={newListTitle}
                         onChangeText={setNewListTitle}
                         placeholder="Título da nova lista"
                         placeholderTextColor={Colors.textSecondary}
+                        onSubmitEditing={handleAddList}
                     />
                     <TouchableOpacity
-                        style={[styles.addListButton, newListTitle.trim() === '' && styles.disabledButton]}
+                        style={[
+                            styles.addListButton,
+                            newListTitle.trim() === '' && styles.disabledButton
+                        ]}
                         onPress={handleAddList}
                         disabled={newListTitle.trim() === ''}
                     >
@@ -149,7 +233,7 @@ const Board: React.FC = () => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -198,6 +282,7 @@ const styles = StyleSheet.create({
         fontSize: Fonts.bodySize,
         color: Colors.textSecondary,
         textAlign: 'center',
+        marginBottom: Spacing.md,
     },
     descriptionInput: {
         fontFamily: Fonts.bodyFamily,
@@ -209,12 +294,13 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.sm,
+        marginBottom: Spacing.md,
         minWidth: 250,
     },
     listsContainer: {
         flexDirection: 'row',
         paddingHorizontal: Spacing.md,
-        paddingBottom: Spacing.lg,
+        paddingBottom: Spacing.xl,
     },
     listsContainerSmall: {
         flexDirection: 'column',
@@ -230,6 +316,12 @@ const styles = StyleSheet.create({
         borderStyle: 'dashed',
         borderColor: Colors.primaryButton,
         alignItems: 'center',
+        alignSelf: 'flex-start',
+    },
+    addListContainerSmall: {
+        width: '92%',
+        alignSelf: 'center',
+        marginHorizontal: 0,
     },
     addListInput: {
         width: '100%',
@@ -257,4 +349,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Board;
+export default BoardUpdated;
